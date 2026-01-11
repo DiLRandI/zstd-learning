@@ -50,6 +50,7 @@ See the full Zstandard guide and library option reference here:
 
 - `docs/zstd-guide.md`
   - Includes a glossary and a CLI ↔ Go option mapping cheat sheet.
+  - Links to the dictionary selection checklist (`docs/dictionary-selection.md`).
 
 ## External resources
 

@@ -120,6 +120,12 @@ The `cmd/decompress` tool decompresses every `.zst` file in a folder. Relevant f
 
 Output goes to `decompressed/` by default.
 
+## Dictionary selection guide
+
+If you want a practical, step‑by‑step checklist for picking and validating dictionaries, see:
+
+- `docs/dictionary-selection.md`
+
 ## Glossary (quick)
 
 - Frame: the full zstd-encoded unit with a header and one or more blocks.
