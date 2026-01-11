@@ -93,19 +93,25 @@ func main() {
 	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	start := time.Now()
 
-	var payload any
 	outputFile := filepath.Join(*outDir, fmt.Sprintf("%s_%s.json", dataTypeVal, time.Now().Format("20060102_150405")))
 
+	var err error
 	switch dataTypeVal {
 	case "movies":
-		payload = generateMovies(rng, *count)
+		err = writeJSONArray(outputFile, *count, func(i int) any {
+			return makeMovie(rng, i+1)
+		})
 	case "books":
-		payload = generateBooks(rng, *count)
+		err = writeJSONArray(outputFile, *count, func(i int) any {
+			return makeBook(rng, i+1)
+		})
 	case "people":
-		payload = generatePeople(rng, *count)
+		err = writeJSONArray(outputFile, *count, func(i int) any {
+			return makePerson(rng, i+1)
+		})
 	}
 
-	if err := writeJSON(outputFile, payload); err != nil {
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to write output: %v\n", err)
 		os.Exit(1)
 	}
@@ -154,65 +160,83 @@ func promptInt(message string) int {
 	}
 }
 
-func generateMovies(rng *rand.Rand, count int) []Movie {
-	items := make([]Movie, 0, count)
-	for i := 0; i < count; i++ {
-		items = append(items, Movie{
-			ID:        i + 1,
-			Title:     pick(rng, movieTitles),
-			Genre:     pick(rng, movieGenres),
-			Year:      rng.Intn(45) + 1980,
-			Director:  pick(rng, directors),
-			Rating:    randFloat(rng, 5.5, 9.8),
-			Runtime:   rng.Intn(81) + 80,
-			CreatedAt: time.Now().Format(time.RFC3339),
-		})
+func makeMovie(rng *rand.Rand, id int) Movie {
+	return Movie{
+		ID:        id,
+		Title:     pick(rng, movieTitles),
+		Genre:     pick(rng, movieGenres),
+		Year:      rng.Intn(45) + 1980,
+		Director:  pick(rng, directors),
+		Rating:    randFloat(rng, 5.5, 9.8),
+		Runtime:   rng.Intn(81) + 80,
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
-	return items
 }
 
-func generateBooks(rng *rand.Rand, count int) []Book {
-	items := make([]Book, 0, count)
-	for i := 0; i < count; i++ {
-		items = append(items, Book{
-			ID:        i + 1,
-			Title:     pick(rng, bookTitles),
-			Author:    pick(rng, authors),
-			Genre:     pick(rng, bookGenres),
-			Year:      rng.Intn(60) + 1965,
-			Pages:     rng.Intn(450) + 150,
-			Rating:    randFloat(rng, 3.5, 5.0),
-			CreatedAt: time.Now().Format(time.RFC3339),
-		})
+func makeBook(rng *rand.Rand, id int) Book {
+	return Book{
+		ID:        id,
+		Title:     pick(rng, bookTitles),
+		Author:    pick(rng, authors),
+		Genre:     pick(rng, bookGenres),
+		Year:      rng.Intn(60) + 1965,
+		Pages:     rng.Intn(450) + 150,
+		Rating:    randFloat(rng, 3.5, 5.0),
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
-	return items
 }
 
-func generatePeople(rng *rand.Rand, count int) []Person {
-	items := make([]Person, 0, count)
-	for i := 0; i < count; i++ {
-		first := pick(rng, firstNames)
-		last := pick(rng, lastNames)
-		items = append(items, Person{
-			ID:        i + 1,
-			FirstName: first,
-			LastName:  last,
-			Email:     strings.ToLower(fmt.Sprintf("%s.%s@example.com", first, last)),
-			City:      pick(rng, cities),
-			Country:   pick(rng, countries),
-			Age:       rng.Intn(52) + 18,
-			CreatedAt: time.Now().Format(time.RFC3339),
-		})
+func makePerson(rng *rand.Rand, id int) Person {
+	first := pick(rng, firstNames)
+	last := pick(rng, lastNames)
+	return Person{
+		ID:        id,
+		FirstName: first,
+		LastName:  last,
+		Email:     strings.ToLower(fmt.Sprintf("%s.%s@example.com", first, last)),
+		City:      pick(rng, cities),
+		Country:   pick(rng, countries),
+		Age:       rng.Intn(52) + 18,
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
-	return items
 }
 
-func writeJSON(path string, payload any) error {
-	data, err := json.MarshalIndent(payload, "", "  ")
+func writeJSONArray(path string, count int, makeItem func(i int) any) error {
+	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, data, 0o644)
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+	defer writer.Flush()
+
+	if _, err := writer.WriteString("[\n"); err != nil {
+		return err
+	}
+
+	for i := 0; i < count; i++ {
+		if i > 0 {
+			if _, err := writer.WriteString(",\n"); err != nil {
+				return err
+			}
+		}
+
+		item := makeItem(i)
+		data, err := json.Marshal(item)
+		if err != nil {
+			return err
+		}
+		if _, err := writer.Write(data); err != nil {
+			return err
+		}
+	}
+
+	if _, err := writer.WriteString("\n]\n"); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func pushMetrics(pushURL, dataType string, count int, duration time.Duration) error {
