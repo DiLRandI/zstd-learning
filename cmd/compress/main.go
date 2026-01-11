@@ -30,6 +30,7 @@ func main() {
 	level := flag.Int("level", 0, "zstd compression level (0=default, 1..22 supported)")
 	useDict := flag.Bool("use-dict", false, "enable dictionary compression")
 	dictPath := flag.String("dict", "", "path to zstd dictionary file")
+	runID := flag.String("run-id", "", "run identifier for metrics grouping")
 	pushURL := flag.String("pushgateway", "http://localhost:9091", "Pushgateway base URL")
 	flag.Parse()
 
@@ -74,8 +75,11 @@ func main() {
 	if sourceLabel == "." || sourceLabel == string(filepath.Separator) {
 		sourceLabel = "output"
 	}
+	if strings.TrimSpace(*runID) == "" {
+		*runID = time.Now().Format("20060102_150405")
+	}
 
-	if err := pushMetrics(*pushURL, stats, duration, sourceLabel, *level, *useDict); err != nil {
+	if err := pushMetrics(*pushURL, stats, duration, sourceLabel, *level, *useDict, *runID); err != nil {
 		fmt.Fprintf(os.Stderr, "metrics push failed: %v\n", err)
 		os.Exit(1)
 	}
@@ -179,7 +183,7 @@ func listFiles(dir string) ([]string, error) {
 	return paths, nil
 }
 
-func pushMetrics(pushURL string, stats runStats, duration time.Duration, source string, level int, useDict bool) error {
+func pushMetrics(pushURL string, stats runStats, duration time.Duration, source string, level int, useDict bool, runID string) error {
 	registry := prometheus.NewRegistry()
 
 	durationGauge := prometheus.NewGauge(prometheus.GaugeOpts{
@@ -240,6 +244,6 @@ func pushMetrics(pushURL string, stats runStats, duration time.Duration, source 
 	}
 
 	pusher := push.New(pushURL, "compress").Gatherer(registry)
-	pusher = pusher.Grouping("source", source).Grouping("use_dict", strconv.FormatBool(useDict)).Grouping("level", levelLabel)
+	pusher = pusher.Grouping("source", source).Grouping("use_dict", strconv.FormatBool(useDict)).Grouping("level", levelLabel).Grouping("run_id", runID)
 	return pusher.Push()
 }

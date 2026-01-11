@@ -5,19 +5,88 @@
   "tags": ["zstd", "compression", "decompression"],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 1,
+  "version": 2,
   "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "run_id",
+        "type": "query",
+        "datasource": "Prometheus",
+        "refresh": 1,
+        "query": "label_values(compress_duration_seconds, run_id)",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "source",
+        "type": "query",
+        "datasource": "Prometheus",
+        "refresh": 1,
+        "query": "label_values(compress_duration_seconds, source)",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "level",
+        "type": "query",
+        "datasource": "Prometheus",
+        "refresh": 1,
+        "query": "label_values(compress_duration_seconds, level)",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "use_dict",
+        "type": "query",
+        "datasource": "Prometheus",
+        "refresh": 1,
+        "query": "label_values(compress_duration_seconds, use_dict)",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
   "panels": [
+    {
+      "type": "text",
+      "title": "Run Filters",
+      "options": {
+        "mode": "markdown",
+        "content": "**Run ID:** $run_id  |  **Source:** $source  |  **Level:** $level  |  **Dict:** $use_dict"
+      },
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 }
+    },
     {
       "type": "stat",
       "title": "Compress Last Run (Age)",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "time() - compress_last_run_timestamp_seconds",
+          "expr": "time() - compress_last_run_timestamp_seconds{run_id=~\"$run_id\",source=~\"$source\",level=~\"$level\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -26,7 +95,7 @@
           "decimals": 1
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 0 }
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 3 }
     },
     {
       "type": "stat",
@@ -34,10 +103,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "compress_duration_seconds",
+          "expr": "compress_duration_seconds{run_id=~\"$run_id\",source=~\"$source\",level=~\"$level\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -46,7 +115,7 @@
           "decimals": 3
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 0 }
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 3 }
     },
     {
       "type": "stat",
@@ -54,10 +123,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "compress_ratio",
+          "expr": "compress_ratio{run_id=~\"$run_id\",source=~\"$source\",level=~\"$level\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -66,7 +135,7 @@
           "decimals": 3
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 0 }
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 3 }
     },
     {
       "type": "stat",
@@ -74,10 +143,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "compress_input_bytes",
+          "expr": "compress_input_bytes{run_id=~\"$run_id\",source=~\"$source\",level=~\"$level\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -86,7 +155,7 @@
           "decimals": 0
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 5 }
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 8 }
     },
     {
       "type": "stat",
@@ -94,10 +163,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "compress_output_bytes",
+          "expr": "compress_output_bytes{run_id=~\"$run_id\",source=~\"$source\",level=~\"$level\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -106,7 +175,7 @@
           "decimals": 0
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 5 }
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 8 }
     },
     {
       "type": "stat",
@@ -114,10 +183,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "compress_files_processed",
+          "expr": "compress_files_processed{run_id=~\"$run_id\",source=~\"$source\",level=~\"$level\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -126,7 +195,7 @@
           "decimals": 0
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 5 }
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 8 }
     },
     {
       "type": "stat",
@@ -134,10 +203,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "time() - decompress_last_run_timestamp_seconds",
+          "expr": "time() - decompress_last_run_timestamp_seconds{run_id=~\"$run_id\",source=~\"$source\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -146,7 +215,7 @@
           "decimals": 1
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 10 }
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 13 }
     },
     {
       "type": "stat",
@@ -154,10 +223,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "decompress_duration_seconds",
+          "expr": "decompress_duration_seconds{run_id=~\"$run_id\",source=~\"$source\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -166,7 +235,7 @@
           "decimals": 3
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 10 }
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 13 }
     },
     {
       "type": "stat",
@@ -174,10 +243,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "decompress_ratio",
+          "expr": "decompress_ratio{run_id=~\"$run_id\",source=~\"$source\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -186,7 +255,7 @@
           "decimals": 3
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 10 }
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 13 }
     },
     {
       "type": "stat",
@@ -194,10 +263,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "decompress_input_bytes",
+          "expr": "decompress_input_bytes{run_id=~\"$run_id\",source=~\"$source\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -206,7 +275,7 @@
           "decimals": 0
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 15 }
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 18 }
     },
     {
       "type": "stat",
@@ -214,10 +283,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "decompress_output_bytes",
+          "expr": "decompress_output_bytes{run_id=~\"$run_id\",source=~\"$source\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -226,7 +295,7 @@
           "decimals": 0
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 15 }
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 18 }
     },
     {
       "type": "stat",
@@ -234,10 +303,10 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "decompress_files_processed",
+          "expr": "decompress_files_processed{run_id=~\"$run_id\",source=~\"$source\",use_dict=~\"$use_dict\"}",
           "refId": "A",
           "instant": true,
-          "legendFormat": "{{source}} dict={{use_dict}}"
+          "legendFormat": "{{run_id}}"
         }
       ],
       "fieldConfig": {
@@ -246,9 +315,8 @@
           "decimals": 0
         }
       },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 15 }
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 18 }
     }
   ],
-  "templating": { "list": [] },
   "time": { "from": "now-24h", "to": "now" }
 }
