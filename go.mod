@@ -2,7 +2,10 @@ module zstd-learning
 
 go 1.25.5
 
-require github.com/prometheus/client_golang v1.23.2
+require (
+	github.com/klauspost/compress v1.18.2
+	github.com/prometheus/client_golang v1.23.2
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

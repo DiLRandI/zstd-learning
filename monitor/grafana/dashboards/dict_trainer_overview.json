@@ -1,0 +1,153 @@
+{
+  "uid": "dict-trainer-overview",
+  "title": "Dictionary Trainer Overview",
+  "description": "Zstd dictionary training metrics",
+  "tags": ["zstd", "dictionary", "trainer"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Last Run (Age)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time() - dict_last_run_timestamp_seconds",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 1
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Train Duration",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "dict_train_duration_seconds",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Samples Used",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "dict_samples_count",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Sample Bytes",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "dict_sample_bytes",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 5 }
+    },
+    {
+      "type": "stat",
+      "title": "Output Dictionary Size",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "dict_output_bytes",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 5 }
+    },
+    {
+      "type": "stat",
+      "title": "Files Scanned",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "dict_files_scanned",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 5 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Dictionary Output Size Over Time",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "dict_output_bytes",
+          "refId": "A",
+          "legendFormat": "{{source}} {{dict_size}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 10 }
+    }
+  ],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" }
+}

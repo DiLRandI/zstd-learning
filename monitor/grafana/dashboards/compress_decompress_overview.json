@@ -1,0 +1,254 @@
+{
+  "uid": "compress-decompress-overview",
+  "title": "Compression / Decompression Overview",
+  "description": "Zstd compression and decompression metrics",
+  "tags": ["zstd", "compression", "decompression"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Compress Last Run (Age)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time() - compress_last_run_timestamp_seconds",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 1
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Compress Duration",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "compress_duration_seconds",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Compress Ratio",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "compress_ratio",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ratio",
+          "decimals": 3
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Compress Input Bytes",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "compress_input_bytes",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 5 }
+    },
+    {
+      "type": "stat",
+      "title": "Compress Output Bytes",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "compress_output_bytes",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 5 }
+    },
+    {
+      "type": "stat",
+      "title": "Compress Files",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "compress_files_processed",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} {{level}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 5 }
+    },
+    {
+      "type": "stat",
+      "title": "Decompress Last Run (Age)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time() - decompress_last_run_timestamp_seconds",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 1
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 10 }
+    },
+    {
+      "type": "stat",
+      "title": "Decompress Duration",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "decompress_duration_seconds",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 3
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 10 }
+    },
+    {
+      "type": "stat",
+      "title": "Decompress Ratio",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "decompress_ratio",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ratio",
+          "decimals": 3
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 10 }
+    },
+    {
+      "type": "stat",
+      "title": "Decompress Input Bytes",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "decompress_input_bytes",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 15 }
+    },
+    {
+      "type": "stat",
+      "title": "Decompress Output Bytes",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "decompress_output_bytes",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 15 }
+    },
+    {
+      "type": "stat",
+      "title": "Decompress Files",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "decompress_files_processed",
+          "refId": "A",
+          "instant": true,
+          "legendFormat": "{{source}} dict={{use_dict}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        }
+      },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 15 }
+    }
+  ],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" }
+}
